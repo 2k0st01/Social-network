@@ -8,10 +8,8 @@ import com.example.eurekaclient.messenger.Messages;
 import com.example.eurekaclient.messenger.MessagesRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,7 +27,6 @@ public class DirectService {
     private final MessagesRepository messagesRepository;
     private final DataProcessor dataProcessor;
     private final KafkaProducerService kafkaProducerService;
-    private final CacheManager cacheManager;
 
     @Transactional
     public Optional<Direct> createDirect(String firstUserId, String secondUserId) {

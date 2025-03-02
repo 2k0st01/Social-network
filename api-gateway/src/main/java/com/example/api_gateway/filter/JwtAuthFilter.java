@@ -85,11 +85,34 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     }
 
 
-    @Data
     public static class Config {
         private String authServiceUri = "lb://AUTH-SERVICE/api/validateToken";
         private String authHeader = "Authorization";
         private String tokenPrefix = "Bearer ";
+
+        public String getAuthServiceUri() {
+            return authServiceUri;
+        }
+
+        public void setAuthServiceUri(String authServiceUri) {
+            this.authServiceUri = authServiceUri;
+        }
+
+        public String getAuthHeader() {
+            return authHeader;
+        }
+
+        public void setAuthHeader(String authHeader) {
+            this.authHeader = authHeader;
+        }
+
+        public String getTokenPrefix() {
+            return tokenPrefix;
+        }
+
+        public void setTokenPrefix(String tokenPrefix) {
+            this.tokenPrefix = tokenPrefix;
+        }
     }
 
 

@@ -7,11 +7,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="api-gateway" />
+      </profile>
+      <profile name="Annotation profile for search-history" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+        </processorPath>
         <module name="rating-service" />
         <module name="post-service" />
         <module name="news-feed-service" />
+        <module name="eureka-friends-followers-service" />
         <module name="eureka-server-application" />
-        <module name="api-gateway" />
         <module name="search-history" />
         <module name="eureka-file-store" />
         <module name="eureka-client-messenger" />
