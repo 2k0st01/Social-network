@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.example.eureka_likes_comments.kafka.KafkaProducerService;
+import com.example.eureka_likes_comments.models.likes.Like;
+import com.example.eureka_likes_comments.models.likes.LikeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,8 +29,8 @@ public class PostService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "count", key = "#userId"),
-            @CacheEvict(value = "posts", key = "#userId")
+            @CacheEvict(value = "postCount", key = "#userId"),
+            @CacheEvict(value = "postIds", key = "#userId")
     })
     public Boolean createNewPost(Long userId, String postURL) {
         Post post = new Post();
@@ -44,8 +47,8 @@ public class PostService {
         return postRepository.findPostById(id);
     }
 
-    @Cacheable(value = "posts", key = "#userId")
     @Transactional(readOnly = true)
+    @Cacheable(value = "postIds", key = "#userId")
     public List<Response> getPostIdsByLinks(Long userId) {
         return postRepository.findPostsByOwnId(userId).stream().map(a -> {
             Response re = new Response();
@@ -58,7 +61,7 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "count", key = "#userId")
+    @Cacheable(value = "postCount", key = "#userId")
     public Long countPostByUserId(Long userId) {
         return postRepository.countPostByOwnId(userId).orElse(0L);
     }
@@ -90,25 +93,6 @@ public class PostService {
         }).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    @Cacheable(value = "hasLike", key = "#postId + ':' + #userId")
-    public boolean hasLikeInPost(Long postId, Long userId) {
-        Optional<Post> post = postRepository.findPostById(postId);
-        return post.isPresent() && post.get().getLikes().stream().anyMatch(a -> a.getOwnerId().equals(userId));
-    }
-
-    @Transactional(readOnly = true)
-    @Cacheable(value = "likeCount", key = "#postId")
-    public Integer getLikeCount(Long postId) {
-        Optional<Post> post = postRepository.findPostById(postId);
-        return post.map(value -> value.getLikes().size()).orElse(0);
-    }
-
-
-//    @Transactional(readOnly = true)
-//    public List<Long> findUsersWithRecentPosts(List<Long> userIDs) {
-//        return postRepository.findUsersWithRecentPosts(userIDs);
-//    }
 
 
     @Scheduled(fixedRate = 43200000L)
@@ -124,5 +108,14 @@ public class PostService {
     public List<Post> getPostsOlderThanTwoWeeks(LocalDateTime twoWeeksAgo) {
         return postRepository.findOldPosts(twoWeeksAgo);
     }
+
+
+
+
+
+//    @Transactional(readOnly = true)
+//    public List<Long> findUsersWithRecentPosts(List<Long> userIDs) {
+//        return postRepository.findUsersWithRecentPosts(userIDs);
+//    }
 
 }

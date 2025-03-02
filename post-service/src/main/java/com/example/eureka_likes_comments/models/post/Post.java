@@ -2,24 +2,13 @@ package com.example.eureka_likes_comments.models.post;
 
 import com.example.eureka_likes_comments.models.comments.Comment;
 import com.example.eureka_likes_comments.models.likes.Like;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 @Entity
@@ -34,17 +23,33 @@ public class Post {
     @Column(name="postURL")
     private String postURL;
     private LocalDateTime time;
-    @OneToMany
+
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name="likes")
     private Set<Like> likes = new HashSet<Like>();
+
     @ElementCollection
     @CollectionTable(name="post_watch_count", joinColumns={@JoinColumn(name="post_id")})
     @MapKeyColumn(name="user_id")
     @Column(name="watch_count")
     private Map<Long, Integer> watchCount = new HashMap<Long, Integer>();
-    @OneToMany
+
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name="comments")
     private List<Comment> comments = new ArrayList<Comment>();
     private boolean isNew = true;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return Objects.equals(id, post.id) && Objects.equals(ownId, post.ownId) && Objects.equals(postURL, post.postURL) && Objects.equals(time, post.time);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, ownId, postURL, time);
+    }
 }

@@ -11,14 +11,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.util.Objects;
 
 @Entity
-@Table(name="Likes")
+@Table(name="likes")
 @Data
 public class Like {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="user_id")
+    @Column(name="like_id")
     private Long id;
     @Column(name="owner_id")
     private Long ownerId;
@@ -26,4 +29,16 @@ public class Like {
     @JoinColumn(name="post_id")
     private Post post;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Like like = (Like) o;
+        return Objects.equals(id, like.id) && Objects.equals(ownerId, like.ownerId) && Objects.equals(post, like.post);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, ownerId, post);
+    }
 }

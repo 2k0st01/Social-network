@@ -88,8 +88,8 @@ public class Controller {
     public ResponseEntity<Boolean> addLike(
             @RequestHeader("Authorization") String token,
             @RequestHeader("X-User-Email") String email,
-            @RequestParam Long id,
-            @RequestHeader("X-User-Id") Long userId) {
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestParam Long id) {
         if (!dataProcessor.isValidToken(token, email)) {
             return ResponseEntity.badRequest().body(false);
         }
@@ -105,7 +105,7 @@ public class Controller {
         if (!dataProcessor.isValidToken(token, email)) {
             return ResponseEntity.badRequest().body(false);
         }
-        return ResponseEntity.ok(postService.hasLikeInPost(postId, userId));
+        return ResponseEntity.ok(likesService.hasLikeInPost(postId, userId));
     }
 
     @GetMapping("/likeCount")
@@ -116,7 +116,7 @@ public class Controller {
         if (!dataProcessor.isValidToken(token, email)) {
             return ResponseEntity.badRequest().body(0);
         }
-        return ResponseEntity.ok(postService.getLikeCount(id));
+        return ResponseEntity.ok(likesService.getLikeCount(id));
     }
 
     @PostMapping("/addComment")
