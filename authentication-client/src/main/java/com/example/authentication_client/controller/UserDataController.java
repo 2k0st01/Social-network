@@ -18,7 +18,7 @@ public class UserDataController {
     private final UserAccountService userAccountService;
 
     @GetMapping("/users")
-    public List<UserInfo> searchUsersByUsername(@RequestHeader(value="Authorization") String token, @RequestParam String username) {
+    public List<UserInfo> searchUsersByUsername(@RequestHeader(value="Authorization") String token, @RequestParam(name = "username") String username) {
         token = token.substring(7);
         String email = jwtService.extractUsername(token);
         return userAccountService.findUserAccountByUserName(username, token, email);

@@ -77,7 +77,7 @@ public class Controller {
     public ResponseEntity<Long> getPostsCounts(
             @RequestHeader("Authorization") String token,
             @RequestHeader("X-User-Email") String email,
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
         if (!dataProcessor.isValidToken(token, email)) {
             return ResponseEntity.badRequest().body(0L);
         }

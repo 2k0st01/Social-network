@@ -9,7 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
       </profile>
-      <profile name="Annotation profile for search-history" enabled="true">
+      <profile name="Annotation profile for authentication-client" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -36,7 +36,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
-      <module name="authentication-client" options="-parameters" />
+      <module name="authentication-client" options="-parameters -parameters" />
       <module name="eureka-client-messenger" options="-parameters" />
       <module name="eureka-file-store" options="-parameters" />
       <module name="eureka-friends-followers-service" options="-parameters" />

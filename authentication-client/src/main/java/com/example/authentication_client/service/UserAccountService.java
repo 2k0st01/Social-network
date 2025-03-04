@@ -47,7 +47,7 @@ public class UserAccountService implements UserDetailsService {
     }
 
 
-    @CacheEvict(value = "userIds", allEntries = true)
+    @CacheEvict(cacheNames = {"users","searchUsers","userExist"}, allEntries = true)
     @Transactional
     public boolean registration(UserAccountDTO request) {
         if (!request.getPassword().equals(request.getDoublePassword())) {
