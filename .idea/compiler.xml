@@ -9,7 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
       </profile>
-      <profile name="Annotation profile for authentication-client" enabled="true">
+      <profile name="Annotation profile for search-history" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -17,8 +17,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
         <module name="rating-service" />
-        <module name="post-service" />
         <module name="news-feed-service" />
+        <module name="post-service" />
         <module name="eureka-friends-followers-service" />
         <module name="eureka-server-application" />
         <module name="search-history" />
@@ -37,17 +37,17 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="authentication-client" options="-parameters -parameters" />
-      <module name="eureka-client-messenger" options="-parameters" />
-      <module name="eureka-file-store" options="-parameters" />
-      <module name="eureka-friends-followers-service" options="-parameters" />
+      <module name="eureka-client-messenger" options="-parameters -parameters" />
+      <module name="eureka-file-store" options="-parameters -parameters" />
+      <module name="eureka-friends-followers-service" options="-parameters -parameters" />
       <module name="eureka-friends-followers-service (1)" options="-parameters" />
       <module name="eureka-friends-followers-service (2)" options="-parameters" />
-      <module name="eureka-server-application" options="-parameters" />
-      <module name="news-feed-service" options="-parameters" />
-      <module name="post-service" options="-parameters" />
+      <module name="eureka-server-application" options="-parameters -parameters" />
+      <module name="news-feed-service" options="-parameters -parameters" />
+      <module name="post-service" options="-parameters -parameters" />
       <module name="rating-serivce" options="-parameters" />
-      <module name="rating-service" options="-parameters" />
-      <module name="search-history" options="-parameters" />
+      <module name="rating-service" options="-parameters -parameters" />
+      <module name="search-history" options="-parameters -parameters" />
     </option>
   </component>
 </project>

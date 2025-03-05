@@ -27,7 +27,7 @@ public class GatewayConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://0.0.0.0:5500", "http://localhost:3000", "http://54.91.72.188:3000"));
+        corsConfig.setAllowedOrigins(List.of("http://0.0.0.0:5500", "http://localhost:3000", "http://34.235.111.122:3000"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setExposedHeaders(List.of("Authorization", "X-User-Id", "X-User-Email"));

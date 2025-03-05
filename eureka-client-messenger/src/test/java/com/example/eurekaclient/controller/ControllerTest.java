@@ -1,10 +1,11 @@
-package com.example.eurekaclient.service.controller;
+package com.example.eurekaclient.controller;
 
 import com.example.eurekaclient.config.DataProcessor;
 import com.example.eurekaclient.controller.Controller;
 import com.example.eurekaclient.direct.Direct;
 import com.example.eurekaclient.direct.DirectService;
 import com.example.eurekaclient.dto.DirectDTO;
+import com.example.eurekaclient.dto.MessageDTO;
 import com.example.eurekaclient.dto.MessagesDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -130,11 +131,14 @@ public class ControllerTest {
         String email = "user1@example.com";
         String toUserId = "user2";
         String message = "Hello";
+        MessageDTO dto = new MessageDTO();
+        dto.setMessage(message);
+        dto.setToUserId(toUserId);
 
         when(dataProcessor.isValidToken(token, email)).thenReturn(true);
         when(directService.send(userName, userId, toUserId, message)).thenReturn(true);
 
-        boolean result = controller.getDirectsByUserId(token, userId, userName, email, toUserId, message);
+        boolean result = controller.getDirectsByUserId(token, userId, userName, email, dto);
 
         assertTrue(result);
         verify(directService, times(1)).send(userName, userId, toUserId, message);
@@ -148,10 +152,13 @@ public class ControllerTest {
         String email = "user1@example.com";
         String toUserId = "user2";
         String message = "Hello";
+        MessageDTO dto = new MessageDTO();
+        dto.setMessage(message);
+        dto.setToUserId(toUserId);
 
         when(dataProcessor.isValidToken(token, email)).thenReturn(false);
 
-        boolean result = controller.getDirectsByUserId(token, userId, userName, email, toUserId, message);
+        boolean result = controller.getDirectsByUserId(token, userId, userName, email, dto);
 
         assertFalse(result);
     }

@@ -4,19 +4,14 @@ import com.example.eurekaclient.config.DataProcessor;
 import com.example.eurekaclient.direct.Direct;
 import com.example.eurekaclient.direct.DirectService;
 import com.example.eurekaclient.dto.DirectDTO;
+import com.example.eurekaclient.dto.MessageDTO;
 import com.example.eurekaclient.dto.MessagesDTO;
 import java.util.List;
 import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/apis")
@@ -66,11 +61,11 @@ public class Controller {
                                       @RequestHeader(value="X-User-Id") String userId,
                                       @RequestHeader(value="X-User-Name") String userName,
                                       @RequestHeader(value="X-User-Email") String email,
-                                      @RequestParam String toUserId, String message) {
+                                      @RequestBody MessageDTO message) {
         if (!dataProcessor.isValidToken(token, email)) {
             return false;
         }
-        return directService.send(userName, userId, toUserId, message);
+        return directService.send(userName, userId, message.getToUserId(), message.getMessage());
     }
 
     @GetMapping("/getMessages/{id}")

@@ -7,12 +7,11 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-
 public class MessageDTO implements Serializable {
-    private String userId;
-    private String userName;
     private String toUserId;
     private String message;
 
+    public MessageDTO() {
 
+    }
 }

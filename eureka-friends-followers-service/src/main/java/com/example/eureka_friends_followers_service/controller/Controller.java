@@ -26,7 +26,7 @@ public class Controller {
             @RequestHeader("X-User-Id") Long userId,
             @RequestHeader("X-User-Name") String userName,
             @RequestHeader("X-User-Email") String email,
-            @PathVariable Long id) {
+            @PathVariable(name = "id") Long id) {
         if (!dataProcessor.isValidToken(token, email)) {
             return ResponseEntity.status(401).body(0);
         }
