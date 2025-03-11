@@ -18,8 +18,7 @@ import lombok.Generated;
 @Data
 public class ChangePasswordRequestToken {
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="change_password_token_sequence")
-    @SequenceGenerator(name="change_password_token_sequence", sequenceName="change_password_token_sequence", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     @Column(nullable=false)
     private String token;

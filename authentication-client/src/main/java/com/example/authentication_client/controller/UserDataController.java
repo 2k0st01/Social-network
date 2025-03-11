@@ -6,7 +6,10 @@ import com.example.authentication_client.model.UserAccount;
 import com.example.authentication_client.service.JwtService;
 import com.example.authentication_client.service.UserAccountService;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +28,12 @@ public class UserDataController {
     }
 
     @PostMapping("/getUserName")
-    public UserInfo test(@RequestBody UserRequestDTO id) {
+    public UserInfo getUserName(@RequestBody UserRequestDTO id) {
         Optional<UserAccount> userAccount = userAccountService.findUserAccountById(id.getId());
         return userAccount.map((account) -> new UserInfo(account.getId(), account.getUsernameByUser(), account.getEmail())).orElse(null);
     }
+
+
 
 
 }

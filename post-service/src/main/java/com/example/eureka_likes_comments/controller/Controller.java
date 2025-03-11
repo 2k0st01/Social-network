@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/post")
@@ -48,6 +50,13 @@ public class Controller {
             return ResponseEntity.badRequest().body("");
         }
         return ResponseEntity.ok(avatarService.getAvatarUrlByOwnId(userId));
+    }
+
+    @PostMapping ("/getUserAvatars")
+    public ResponseEntity<Map<Long,String>> getUserAvatars(
+            @RequestBody Set<Long> id) {
+
+        return ResponseEntity.ok(avatarService.getAvatarsUrlByOwnId(id));
     }
 
     @PostMapping("/create")

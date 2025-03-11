@@ -4,11 +4,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
@@ -49,5 +52,40 @@ public class DataProcessor {
                     .header("X-Is-Add", String.valueOf(isAdd))
                     .retrieve().bodyToMono(Boolean.class).block();
         }
+    }
+
+    public Map<Long,String> getUsersNames(Set<Long> list) {
+        List<ServiceInstance> instances = discoveryClient.getInstances("auth-service");
+        if (instances.isEmpty()) {
+            throw new RuntimeException("Auth service not found");
+        }
+
+        String url = instances.get(0).getUri().toString() + "/api/getUserNames";
+
+
+        return webClientBuilder.build()
+                .post()
+                .uri(url)
+                .bodyValue(list)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<Long,String>>() {})
+                .block();
+    }
+
+    public Map<Long,String> getUsersAvatars(Set<Long> list) {
+        List<ServiceInstance> instances = discoveryClient.getInstances("post-service");
+        if (instances.isEmpty()) {
+            throw new RuntimeException("Post service not found");
+        }
+
+        String url = instances.get(0).getUri().toString() + "/post/getUserAvatars";
+
+        return webClientBuilder.build()
+                .post()
+                .uri(url)
+                .bodyValue(list)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<Long,String>>() {})
+                .block();
     }
 }

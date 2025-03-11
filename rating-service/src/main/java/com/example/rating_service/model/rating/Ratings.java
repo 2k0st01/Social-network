@@ -1,12 +1,8 @@
 package com.example.rating_service.model.rating;
 
 import com.example.rating_service.model.userRating.UsersRating;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
@@ -14,6 +10,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(indexes = @Index(name = "idx_rating_own_id", columnList = "own_id"))
 public class Ratings {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -2,18 +2,18 @@ package com.example.eurekaclient.messenger;
 
 import com.example.eurekaclient.direct.Direct;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(
+        indexes = {
+                @Index(name = "idx_messages_direct_time", columnList = "direct_id, time DESC"),
+                @Index(name = "idx_messages_user_name", columnList = "userName")
+        }
+)
 public class Messages {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

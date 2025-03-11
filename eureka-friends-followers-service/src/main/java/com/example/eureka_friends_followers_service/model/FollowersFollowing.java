@@ -1,5 +1,7 @@
 package com.example.eureka_friends_followers_service.model;
 
+import com.example.eureka_friends_followers_service.model.follower.Follower;
+import com.example.eureka_friends_followers_service.model.following.Following;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -16,31 +18,26 @@ public class FollowersFollowing implements Serializable {
     @Column(name="main_id")
     private Long id;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name="collection_followers", joinColumns={@JoinColumn(name="followers_following_id")})
-    @Column(name="follower_id")
-    private Set<Long> followers = new HashSet<>();
+    @OneToMany(mappedBy = "followersFollowing", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Follower> followers = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name="collection_following", joinColumns={@JoinColumn(name="followers_following_id")})
-    @Column(name="following_id")
-    private Set<Long> following = new HashSet<>();
+    @OneToMany(mappedBy = "followersFollowing", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Following> following = new HashSet<>();
 
     public void addToFollowers(Long id) {
-        followers.add(id);
+        followers.add( new Follower(this, id) );
     }
 
     public void addToFollowing(Long id) {
-        following.add(id);
+        following.add( new Following(this, id) );
     }
 
-    public void removeFromFollowers(Long id) {
-        followers.remove(id);
+    public void removeFromFollowers(Long followerId) {
+        followers.removeIf(follower -> follower.getFollowerId().equals(followerId));
     }
 
-    public void removeFromFollowing(Long id) {
-        following.remove(id);
+    public void removeFromFollowing(Long followingId) {
+        following.removeIf(f -> f.getFollowingId().equals(followingId));
     }
-
 
 }

@@ -9,10 +9,7 @@ import com.example.authentication_client.repository.UserAccountRepository;
 import com.example.authentication_client.role.UserRoles;
 import com.example.authentication_client.utils.AuntResponse;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -47,7 +44,7 @@ public class UserAccountService implements UserDetailsService {
     }
 
 
-    @CacheEvict(cacheNames = {"users","searchUsers","userExist"}, allEntries = true)
+    @CacheEvict(cacheNames = {"loadUser","findByEmail","findByID","searchUsers","userExist"}, allEntries = true)
     @Transactional
     public boolean registration(UserAccountDTO request) {
         if (!request.getPassword().equals(request.getDoublePassword())) {
@@ -96,8 +93,8 @@ public class UserAccountService implements UserDetailsService {
         return false;
     }
 
-    @CacheEvict(value = "users", key = "#email")
     @Transactional
+    @CacheEvict(value = "loadUser", key = "#email")
     public void changerPassword(PasswordDTO passwordDTO, String email, String token) {
         Optional<UserAccount> userAccount = userAccountRepository.findUserAccountByEmail(email);
 
@@ -127,7 +124,7 @@ public class UserAccountService implements UserDetailsService {
         return Collections.emptyList();
     }
 
-    @Cacheable(value = "searchUsers", key = "#username")
+    @Cacheable(value = "searchUsers", key = "#username + ':' + #token")
     @Transactional(readOnly = true)
     public List<UserInfo> findUserAccountByUserName(String username, String token, String email) {
         Optional<UserAccount> userAccount;
@@ -142,14 +139,14 @@ public class UserAccountService implements UserDetailsService {
         return null;
     }
 
-    @Cacheable(value = "users", key = "#username")
+    @Cacheable(value = "loadUser", key = "#email")
     @Transactional(readOnly = true)
-    public UserAccount loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userAccountRepository.findUserAccountByEmail(username)
+    public UserAccount loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userAccountRepository.findUserAccountByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found exception"));
     }
 
-    @Cacheable(value = "users", key = "#email")
+    @Cacheable(value = "findByEmail", key = "#email")
     @Transactional(readOnly = true)
     public Optional<UserAccount> findUserAccountByEmail(String email) {
         return userAccountRepository.findUserAccountByEmail(email);
@@ -161,33 +158,20 @@ public class UserAccountService implements UserDetailsService {
         return userAccountRepository.existsUserAccountById(id);
     }
 
-    @Cacheable(value = "users", key = "#id")
+    @Cacheable(value = "findByID", key = "#id")
     @Transactional(readOnly = true)
     public Optional<UserAccount> findUserAccountById(Long id) {
         return userAccountRepository.findUserAccountById(id);
     }
 
-    @Transactional
-    public void creat() {
-        for (int i = 0; i < 50; ++i) {
-            UserAccountDTO accountDTO = new UserAccountDTO
-                    ("test-stan@user.name" + i, randomUser() + i, "1234", "1234");
+    @Transactional(readOnly = true)
+    public Map<Long, String> findUserAccountsByIds(Set<Long> id) {
+        List <UserAccount> userAccount = userAccountRepository.findByIdIn(id);
+        Map<Long, String> map = new HashMap<>();
 
-            this.registration(accountDTO);
-        }
+        userAccount.forEach(a -> map.put(a.getId(),a.getUsernameByUser()));
+
+        return map;
     }
-
-    private String randomUser() {
-        List<String> usernames = List.of(
-                "Stan", "Andri", "Vasyl", "Stepan",
-                "Kyzma", "Oleh", "Vlad", "Serhii",
-                "Yaroslav", "Jenya", "Karina", "Ostap", "Leo");
-
-        int size = usernames.size() - 1;
-        Random rc = new Random();
-        return usernames.get(rc.nextInt(0, size));
-    }
-
-
 }
 

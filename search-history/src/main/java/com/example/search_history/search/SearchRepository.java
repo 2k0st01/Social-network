@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SearchRepository
 extends JpaRepository<Search, Long> {
-    List<Search> findTop10ByOwnIdOrderByTimeDesc(String var1);
+    List<Search> findTop10ByOwnIdOrderByTimeDesc(String ownID);
 }

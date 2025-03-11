@@ -1,6 +1,7 @@
 package com.example.eureka_likes_comments.models.avatar;
 
-import java.util.Optional;
+import java.util.*;
+
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,4 +33,22 @@ public class AvatarService {
                 .map(UserAvatar::getUrl)
                 .orElse("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4g_2Qj3LsNR-iqUAFm6ut2EQVcaou4u2YXw&s");
     }
+
+    @Transactional(readOnly = true)
+    public Map<Long, String> getAvatarsUrlByOwnId(Set<Long> ids) {
+        List<UserAvatar> list = avatarRepository.findByOwnIdIn(ids);
+
+        Map<Long, String> map = new HashMap<>();
+
+        list.forEach(a -> map.put(a.getOwnId(),
+                Optional.ofNullable(a.getUrl())
+                        .orElse("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4g_2Qj3LsNR-iqUAFm6ut2EQVcaou4u2YXw&s")));
+
+        ids.forEach(id -> map.putIfAbsent(id,
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4g_2Qj3LsNR-iqUAFm6ut2EQVcaou4u2YXw&s"));
+
+        return map;
+    }
+
+
 }

@@ -1,21 +1,19 @@
 package com.example.rating_service.model.userRating;
 
 import com.example.rating_service.model.rating.Ratings;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Objects;
 import lombok.Data;
 
 
 @Entity
-@Table(name="user_rating_table")
 @Data
+@Table(name = "user_rating_table", indexes = {
+        @Index(name = "idx_user_rating_user_id", columnList = "user_id"),
+        @Index(name = "idx_user_rating_own_id", columnList = "own_id"),
+        @Index(name = "idx_user_rating_user_id_own_id", columnList = "user_id, own_id") // Композитний індекс
+})
 public class UsersRating {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

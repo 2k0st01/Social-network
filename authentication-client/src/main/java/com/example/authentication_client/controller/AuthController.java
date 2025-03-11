@@ -21,7 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -31,11 +33,6 @@ public class AuthController {
     private final EmailConfirmationTokenService emailConfirmationTokenService;
     private final ChangePasswordRequestTokenService changePasswordRequestTokenService;
     private final JwtService jwtService;
-
-    @GetMapping("/create")
-    public void create() {
-        userAccountService.creat();
-    }
 
     @GetMapping("/checkUserExist/{userId}")
     public boolean findUser(@PathVariable Long userId) {
@@ -113,6 +110,12 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, "Error: " + e.getMessage()));
         }
+    }
+
+    @PostMapping("/getUserNames")
+    public Map<Long, String> getUserNames(@RequestBody Set<Long> id) {
+        System.out.println("-----I'm here=-----");
+        return  userAccountService.findUserAccountsByIds(id);
     }
 
     @PostMapping("/changePassword")

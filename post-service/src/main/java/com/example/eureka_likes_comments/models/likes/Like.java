@@ -1,22 +1,16 @@
 package com.example.eureka_likes_comments.models.likes;
 
 import com.example.eureka_likes_comments.models.post.Post;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
 @Entity
-@Table(name="likes")
+@Table(name = "likes", indexes = {
+        @Index(name = "idx_like_owner_post", columnList = "owner_id, post_id")
+})
 @Data
 public class Like {
     @Id

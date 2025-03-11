@@ -1,14 +1,22 @@
 package com.example.eureka_friends_followers_service.model;
 
+import com.example.eureka_friends_followers_service.DTO.UserDTO;
 import com.example.eureka_friends_followers_service.config.DataProcessor;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,8 +36,6 @@ public class FFService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "allFollowings", key = "#ownID"),
-            @CacheEvict(value = "allFollowers", key = "#targetID"),
             @CacheEvict(value = "followingCount", key = "#ownID"),
             @CacheEvict(value = "followersCount", key = "#targetID"),
             @CacheEvict(value = "hasFollow", key = "#ownID + ':' + #targetID"),
@@ -41,7 +47,7 @@ public class FFService {
         FollowersFollowing follower = repository.findById(ownID)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + ownID));
 
-        boolean alreadyFollowing = following.getFollowers().contains(ownID);
+        boolean alreadyFollowing = repository.existsFollower(ownID, targetID);
 
         if (alreadyFollowing) {
             follower.removeFromFollowing(targetID);
@@ -53,8 +59,8 @@ public class FFService {
             dataProcessor.isAdd(ownID, targetID, true);
         }
 
-        repository.save(following);
-        repository.save(follower);
+        repository.saveAll(List.of(following, follower));
+
 
         return alreadyFollowing ? "Unfollowed" : "Followed";
     }
@@ -62,22 +68,49 @@ public class FFService {
     @Transactional(readOnly = true)
     @Cacheable(value = "hasFollow", key = "#id + ':' + #userId")
     public boolean hasFollow(Long id, Long userId) {
-        return repository.findById(id)
-                .map(followersFollowing -> followersFollowing.getFollowers().contains(userId))
-                .orElse(false);
+        return repository.existsFollower(userId, id);
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> getAllFollowing(Long targetID, Integer page) {
+        if (targetID == null) {
+            return Collections.emptyList();
+        }
+
+        PageRequest pageable = PageRequest.of(page, 50);
+
+        Page<Long> followingIds = repository.findFollowingByIds(targetID, pageable);
+
+        Map<Long, String> avatars = dataProcessor.getUsersAvatars(followingIds.toSet());
+        Map<Long, String> names = dataProcessor.getUsersNames(followingIds.toSet());
+
+
+        return followingIds.stream()
+                .map(id -> new UserDTO(id, avatars.get(id), names.get(id)))
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "allFollowings", key = "#targetID")
-    public Set<Long> getAllFollowing(Long targetID) {
-        return repository.findFollowingById(targetID);
+    public List<UserDTO> getAllFollowers(Long targetID, Integer page) {
+        if (targetID == null) {
+            return Collections.emptyList();
+        }
+
+        PageRequest pageable = PageRequest.of(page, 50);
+
+        Page<Long> followerIds = repository.findFollowersByIds(targetID, pageable);
+
+        Map<Long, String> avatars = dataProcessor.getUsersAvatars(followerIds.toSet());
+        Map<Long, String> names = dataProcessor.getUsersNames(followerIds.toSet());
+
+
+        return followerIds.stream()
+                .map(id -> new UserDTO(id, avatars.get(id), names.get(id)))
+                .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    @Cacheable(value = "allFollowers", key = "#targetID")
-    public Set<Long> getAllFollowers(Long targetID) {
-        return repository.findFollowersById(targetID);
-    }
+
 
     @Transactional(readOnly = true)
     @Cacheable(value = "followingCount", key = "#userId")
@@ -94,7 +127,8 @@ public class FFService {
     @Transactional(readOnly = true)
     @Cacheable(value = "userExist", key = "#id")
     public boolean existsFollowersFollowingById(Long id) {
-        return repository.existsFollowersFollowingById(id);
+        return repository.existsById(id);  // JpaRepository вже має цей метод
     }
+
 
 }

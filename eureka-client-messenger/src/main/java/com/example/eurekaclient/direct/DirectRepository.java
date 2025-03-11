@@ -14,14 +14,9 @@ public interface DirectRepository extends JpaRepository<Direct, Long> {
 
     boolean existsById(Long id);
 
-    @Query("SELECT d FROM Direct d WHERE (d.firstUserId = :firstUser AND d.secondUserId = :secondUser) OR (d.firstUserId = :secondUser AND d.secondUserId = :firstUser)")
-    Optional<Direct> findDirectByTwoUsers(@Param("firstUser") String firstUser, @Param("secondUser") String secondUser);
 
     @Query("SELECT d FROM Direct d WHERE (d.firstUserId = :user1 AND d.secondUserId = :user2) OR (d.firstUserId = :user2 AND d.secondUserId = :user1)")
     Optional<Direct> findDirectByUserIds(@Param("user1") String user1, @Param("user2") String user2);
-
-    @Query("SELECT d FROM Direct d LEFT JOIN FETCH d.messages WHERE d.id = :id")
-    Optional<Direct> findDirectWithMessagesById(@Param("id") Long id);
 
     @Query("SELECT new com.example.eurekaclient.dto.DirectDTO(d.id, d.lastMassage, d.lastTimeUpdate, " +
             "(CASE WHEN d.firstUserId = :userId THEN d.secondUserId ELSE d.firstUserId END), " +

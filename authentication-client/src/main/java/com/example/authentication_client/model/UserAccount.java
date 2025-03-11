@@ -1,12 +1,7 @@
 package com.example.authentication_client.model;
 
 import com.example.authentication_client.role.UserRoles;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -22,9 +17,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Data
+@Table(
+        indexes = {
+                @Index(name = "idx_user_account_email", columnList = "email"),
+                @Index(name = "idx_user_account_username", columnList = "username")
+        }
+)
 public class UserAccount implements UserDetails, Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NonNull
     private String email;

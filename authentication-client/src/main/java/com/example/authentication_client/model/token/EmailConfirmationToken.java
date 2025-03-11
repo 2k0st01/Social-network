@@ -18,8 +18,7 @@ import lombok.Generated;
 @Data
 public class EmailConfirmationToken {
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="confirm_token_sequence")
-    @SequenceGenerator(name="confirm_token_sequence", sequenceName="confirm_token_sequence", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     @Column(nullable=false)
     private String token;

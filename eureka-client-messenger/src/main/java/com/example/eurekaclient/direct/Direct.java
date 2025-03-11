@@ -1,13 +1,7 @@
 package com.example.eurekaclient.direct;
 
 import com.example.eurekaclient.messenger.Messages;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +9,14 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(
+        indexes = {
+                @Index(name = "idx_direct_users_combined", columnList = "firstUserId, secondUserId"),
+                @Index(name = "idx_direct_firstUser", columnList = "firstUserId"),
+                @Index(name = "idx_direct_secondUser", columnList = "secondUserId"),
+                @Index(name = "idx_direct_lastUpdate", columnList = "lastTimeUpdate DESC")
+        }
+)
 public class Direct {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

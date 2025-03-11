@@ -1,17 +1,12 @@
 package com.example.search_history.search;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="search")
+@Table(name="search", indexes = @Index(name = "search_index_own_id", columnList = "own_id"))
 @Data
 public class Search {
     @Id
@@ -20,6 +15,7 @@ public class Search {
     private Long id;
     private String username;
     private String userId;
+    @Column(name = "own_id")
     private String ownId;
     private LocalDateTime time;
 }

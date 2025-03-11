@@ -13,6 +13,10 @@ import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
+@Table(name = "post", indexes = {
+        @Index(name = "idx_post_own_id", columnList = "own_id"),
+        @Index(name = "idx_post_own_new", columnList = "own_id, isNew")
+})
 public class Post {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -1,5 +1,9 @@
 package com.example.eureka_friends_followers_service.model;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,11 +15,23 @@ import java.util.Set;
 public interface FFRepository
 extends JpaRepository<FollowersFollowing, Long> {
 
-    @Query("SELECT f.followers FROM FollowersFollowing f WHERE f.id = :id")
+
+    @Query("SELECT f.followerId FROM Follower f WHERE f.followersFollowing.id = :id")
+    Page<Long> findFollowersByIds(@Param("id") Long id, Pageable pageable);
+
+    @Query("SELECT f.followingId FROM Following f WHERE f.followersFollowing.id = :id")
+    Page<Long> findFollowingByIds(@Param("id") Long id, Pageable pageable);
+
+    @Query("SELECT f.followerId FROM Follower f WHERE f.followersFollowing.id = :id")
     Set<Long> findFollowersById(@Param("id") Long id);
 
-    @Query("SELECT f.following FROM FollowersFollowing f WHERE f.id = :id")
+    @Query("SELECT f.followingId FROM Following f WHERE f.followersFollowing.id = :id")
     Set<Long> findFollowingById(@Param("id") Long id);
 
-    boolean existsFollowersFollowingById(Long var1);
+
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Follower f " +
+            "WHERE f.followerId = :ownID AND f.followersFollowing.id = :targetID")
+    boolean existsFollower(@Param("ownID") Long ownID, @Param("targetID") Long targetID);
+
+
 }

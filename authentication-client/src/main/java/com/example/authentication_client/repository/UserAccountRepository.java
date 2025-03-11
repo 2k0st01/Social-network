@@ -3,6 +3,8 @@ package com.example.authentication_client.repository;
 import com.example.authentication_client.model.UserAccount;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,8 +22,11 @@ extends JpaRepository<UserAccount, Long> {
 
     Optional<UserAccount> findUserAccountById(Long var1);
 
+
     @Query("UPDATE UserAccount a SET a.emailVerification = true WHERE a.email = :email")
     void enableAppUser(@Param("email") String email);
 
     List<UserAccount> findTop10UserAccountByUsernameStartingWith(String var1);
+
+    List<UserAccount> findByIdIn(Set<Long> id);
 }

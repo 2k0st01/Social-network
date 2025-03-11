@@ -1,12 +1,14 @@
 package com.example.eureka_friends_followers_service.controller;
 
 import com.example.eureka_friends_followers_service.DTO.Response;
+import com.example.eureka_friends_followers_service.DTO.UserDTO;
 import com.example.eureka_friends_followers_service.config.DataProcessor;
 import com.example.eureka_friends_followers_service.model.FFService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -47,29 +49,31 @@ public class Controller {
     }
 
     @GetMapping("/getFollowing/{id}")
-    public ResponseEntity<Set<Long>> getFollowing(
+    public ResponseEntity<List<UserDTO>> getFollowing(
             @RequestHeader("Authorization") String token,
             @RequestHeader("X-User-Id") Long userId,
             @RequestHeader("X-User-Name") String userName,
             @RequestHeader("X-User-Email") String email,
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") Integer page) {
         if (!dataProcessor.isValidToken(token, email)) {
             return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.ok(ffService.getAllFollowing(id));
+        return ResponseEntity.ok(ffService.getAllFollowing(id,page));
     }
 
     @GetMapping("/getFollowers/{id}")
-    public ResponseEntity<Set<Long>> getFollowers(
+    public ResponseEntity<List<UserDTO>> getFollowers(
             @RequestHeader("Authorization") String token,
             @RequestHeader("X-User-Id") Long userId,
             @RequestHeader("X-User-Name") String userName,
             @RequestHeader("X-User-Email") String email,
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") Integer page) {
         if (!dataProcessor.isValidToken(token, email)) {
             return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.ok(ffService.getAllFollowers(id));
+        return ResponseEntity.ok(ffService.getAllFollowers(id,page));
     }
 
     @GetMapping("/getUserName")
@@ -91,18 +95,18 @@ public class Controller {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(ffService.create(id));
     }
 
-    @PostMapping("/toggleFollow/{id}")
-    public ResponseEntity<String> toggleFollow(
-            @RequestHeader("Authorization") String token,
-            @RequestHeader("X-User-Id") Long userId,
-            @RequestHeader("X-User-Name") String userName,
-            @RequestHeader("X-User-Email") String email,
-            @PathVariable Long id) {
-        if (!dataProcessor.isValidToken(token, email)) {
-            return ResponseEntity.status(401).build();
+        @PostMapping("/toggleFollow/{id}")
+        public ResponseEntity<String> toggleFollow(
+                @RequestHeader("Authorization") String token,
+                @RequestHeader("X-User-Id") Long userId,
+                @RequestHeader("X-User-Name") String userName,
+                @RequestHeader("X-User-Email") String email,
+                @PathVariable Long id) {
+            if (!dataProcessor.isValidToken(token, email)) {
+                return ResponseEntity.status(401).build();
+            }
+            return ResponseEntity.ok(ffService.toggleFollow(id, userId));
         }
-        return ResponseEntity.ok(ffService.toggleFollow(id, userId));
-    }
 
     @GetMapping("/hasFollow/{id}")
     public ResponseEntity<Boolean> hasFollow(

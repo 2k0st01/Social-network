@@ -23,8 +23,5 @@ extends JpaRepository<Post, Long> {
     List<Post> findOldPosts(@Param(value="twoWeeksAgo") LocalDateTime var1);
 
     @Query(value="SELECT p FROM Post p WHERE p.ownId IN :ids AND p.isNew = true")
-   List<Post> findNewPostsByOwnIds(@Param(value="ids") Set<Long> var1);
-
-    @Query(value="SELECT DISTINCT p.ownId FROM Post p WHERE p.ownId IN :userIDs AND p.isNew = true")
-    List<Long> findUsersWithRecentPosts(@Param(value="userIDs") List<Long> var1);
+    List<Post> findNewPostsByOwnIds(@Param(value="ids") Set<Long> var1);
 }
