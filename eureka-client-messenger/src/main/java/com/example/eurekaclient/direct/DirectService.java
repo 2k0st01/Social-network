@@ -7,6 +7,8 @@ import com.example.eurekaclient.kafka.KafkaProducerService;
 import com.example.eurekaclient.messenger.Messages;
 import com.example.eurekaclient.messenger.MessagesRepository;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -47,7 +49,9 @@ public class DirectService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "direct", key = "#userId"),
-            @CacheEvict(value = "direct", key = "#toUser")
+            @CacheEvict(value = "direct", key = "#toUser"),
+            @CacheEvict(value = "massages", key = "#toUser + ':' + #userId"),
+            @CacheEvict(value = "massages", key = "#userId + ':' + #toUser")
     })
     public boolean send(String userName, String userId, String toUser, String message) {
         boolean userExist = dataProcessor.checkUserExists(toUser);
@@ -88,16 +92,29 @@ public class DirectService {
     }
 
     @Transactional(readOnly=true)
-    public List<MessagesDTO> getMessages(String firstID, String userName, String secondID, Integer page) {
-        PageRequest pageable = PageRequest.of(page, 25, Sort.by("time").descending());
-        Optional<Direct> direct = directRepository.findDirectByUserIds(firstID, secondID);
-        if (direct.isPresent()) {
-            if (direct.get().getFirstUserId().equals(secondID) || direct.get().getSecondUserId().equals(secondID)) {
-                return messagesRepository.getMessageDTObyDirectId(direct.get().getId(), userName, pageable).getContent();
-            }
-            return null;
-        }
-        return null;
+    @Cacheable(cacheNames = "massages", key = "#firstID + ':' + #secondID")
+    public List<MessagesDTO> getMessages(String firstID, String username, String secondID) {
+        PageRequest pageable = PageRequest.of(0, 25, Sort.by("time").descending());
+        return getMessages(firstID,username,secondID,pageable);
     }
+
+    @Transactional(readOnly=true)
+    public List<MessagesDTO> getMessages(String firstID, String username, String secondID, Integer page) {
+        PageRequest pageable = PageRequest.of(page, 25, Sort.by("time").descending());
+        return getMessages(firstID,username,secondID,pageable);
+    }
+
+    private List<MessagesDTO> getMessages(String firstID, String username, String secondID, PageRequest pageable){
+        Optional<Direct> direct = directRepository.findDirectByUserIds(firstID, secondID);
+        if (direct.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (direct.get().getFirstUserId().equals(secondID) || direct.get().getSecondUserId().equals(secondID)) {
+            return messagesRepository.getMessageDTObyDirectId(direct.get().getId(), username, pageable).getContent();
+        }
+        return Collections.emptyList();
+    }
+
+
 
 }

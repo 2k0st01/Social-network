@@ -111,6 +111,20 @@ public class FFService {
     }
 
 
+    @Transactional(readOnly = true)
+    public List<UserDTO> findTop10ByFollowers() {
+        Set<Long> set = repository.findTop10ByFollowers();
+
+        Map<Long, String> avatars = dataProcessor.getUsersAvatars(set);
+        Map<Long, String> names = dataProcessor.getUsersNames(set);
+
+
+        return set.stream()
+                .map(id -> new UserDTO(id, avatars.get(id), names.get(id)))
+                .collect(Collectors.toList());
+    }
+
+
 
     @Transactional(readOnly = true)
     @Cacheable(value = "followingCount", key = "#userId")
@@ -129,6 +143,8 @@ public class FFService {
     public boolean existsFollowersFollowingById(Long id) {
         return repository.existsById(id);  // JpaRepository вже має цей метод
     }
+
+
 
 
 }

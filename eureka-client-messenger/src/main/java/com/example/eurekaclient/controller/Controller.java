@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class Controller {
     private final DirectService directService;
     private final DataProcessor dataProcessor;
-
-    @GetMapping("/v1")
-    public ResponseEntity<String> getUserInfo(@RequestHeader(value="Authorization") String token,
-                                              @RequestHeader(value="X-User-Id") String userId,
-                                              @RequestHeader(value="X-User-Name") String userName) {
-        if (!dataProcessor.isValidToken(token, userName)) {
-            return ResponseEntity.ok("Invalid request");
-        }
-        String userInfo = "User ID: " + userId + ", Username: " + userName;
-        return ResponseEntity.ok(userInfo);
-    }
 
     @PostMapping("/createDirect")
     public boolean createDirects(@RequestHeader(value="X-User-Id") String userId,
@@ -46,7 +36,7 @@ public class Controller {
                                                 @RequestHeader(value="X-User-Email") String email,
                                                 @RequestParam(value="page", defaultValue="0") Integer page) {
         if (!dataProcessor.isValidToken(token, email)) {
-            return null;
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         try {
             return directService.getDirects(userId, userName, page);
@@ -63,7 +53,7 @@ public class Controller {
                                       @RequestHeader(value="X-User-Email") String email,
                                       @RequestBody MessageDTO message) {
         if (!dataProcessor.isValidToken(token, email)) {
-            return false;
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return directService.send(userName, userId, message.getToUserId(), message.getMessage());
     }
@@ -71,14 +61,17 @@ public class Controller {
     @GetMapping("/getMessages/{id}")
     public List<MessagesDTO> getMessages(@RequestHeader(value="Authorization") String token,
                                          @RequestHeader(value="X-User-Id") String userId,
-                                         @RequestHeader(value="X-User-Name") String userName,
+                                         @RequestHeader(value="X-User-Name") String username,
                                          @RequestHeader(value="X-User-Email") String email,
                                          @PathVariable String id,
                                          @RequestParam(value="page", defaultValue="0") Integer page) {
         if (!dataProcessor.isValidToken(token, email)) {
-            return null;
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return directService.getMessages(id, userName, userId, page);
+        if(page == 0){
+            return directService.getMessages(id,username,userId);
+        } else
+            return directService.getMessages(id, username, userId, page);
     }
 
 }

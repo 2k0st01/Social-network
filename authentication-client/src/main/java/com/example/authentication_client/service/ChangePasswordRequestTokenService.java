@@ -43,7 +43,7 @@ public class ChangePasswordRequestTokenService {
 
     @Transactional
     public void requestForRecoverPassword(String email){
-        String link = "http://localhost:8763/aunt/changePassword?token=" + creatConfirmToken(email);
+        String link = "https://kostotestproject.it.com/aunt/changePassword?token=" + creatConfirmToken(email);
         emailService.send(email, EmailBuilder.requestForChanePassword("Dear user", link));
     }
 

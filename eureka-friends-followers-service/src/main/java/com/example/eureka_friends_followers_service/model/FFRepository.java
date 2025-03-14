@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -33,5 +34,13 @@ extends JpaRepository<FollowersFollowing, Long> {
             "WHERE f.followerId = :ownID AND f.followersFollowing.id = :targetID")
     boolean existsFollower(@Param("ownID") Long ownID, @Param("targetID") Long targetID);
 
+        @Query("""
+        SELECT f.followersFollowing.id 
+        FROM Follower f 
+        GROUP BY f.followersFollowing.id 
+        ORDER BY COUNT(f.followerId) DESC 
+        LIMIT 10
+    """)
+        Set<Long> findTop10ByFollowers();
 
 }

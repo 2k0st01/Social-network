@@ -120,4 +120,9 @@ public class Controller {
         }
         return ResponseEntity.ok(ffService.hasFollow(id, userId));
     }
+
+    @GetMapping("/top10Users")
+    public List<UserDTO> findTop10ByFollowers(){
+        return ffService.findTop10ByFollowers();
+    }
 }
