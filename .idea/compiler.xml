@@ -9,7 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
       </profile>
-      <profile name="Annotation profile for news-feed-service" enabled="true">
+      <profile name="Annotation profile for eureka-client" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -22,8 +22,8 @@
         <module name="eureka-friends-followers-service" />
         <module name="eureka-server-application" />
         <module name="search-history" />
-        <module name="eureka-file-store" />
         <module name="eureka-client-messenger" />
+        <module name="eureka-file-store" />
         <module name="authentication-client" />
       </profile>
     </annotationProcessing>

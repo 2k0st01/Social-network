@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -177,8 +178,9 @@ public class DirectServiceTest {
 
         List<MessagesDTO> result = directService.getMessages(firstID, userName, secondID, page);
 
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
+
 
 }
 

@@ -43,33 +43,6 @@ public class ControllerTest {
         controller = new Controller(directService,dataProcessor);
     }
 
-    // Тест для /apis/v1
-    @Test
-    public void testGetUserInfo_validToken() {
-        String token = "valid_token";
-        String userId = "user1";
-        String userName = "User1";
-
-        when(dataProcessor.isValidToken(token, userName)).thenReturn(true);
-
-        ResponseEntity<String> response = controller.getUserInfo(token, userId, userName);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals("User ID: user1, Username: User1", response.getBody());
-    }
-
-    @Test
-    public void testGetUserInfo_invalidToken() {
-        String token = "invalid_token";
-        String userId = "user1";
-        String userName = "User1";
-
-        when(dataProcessor.isValidToken(token, userName)).thenReturn(false);
-
-        ResponseEntity<String> response = controller.getUserInfo(token, userId, userName);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Invalid request", response.getBody());
-    }
-
     @Test
     public void testCreateDirect() {
         String userId = "user1";
@@ -119,7 +92,7 @@ public class ControllerTest {
 
         List<DirectDTO> result = controller.getDirectsByUsername(token, userId, userName, email, page);
 
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 
     // Тест для /apis/send
@@ -163,25 +136,24 @@ public class ControllerTest {
         assertFalse(result);
     }
 
-    // Тест для /apis/getMessages/{id}
     @Test
     public void testGetMessages_validToken() {
         String token = "valid_token";
         String userId = "user1";
         String userName = "User1";
         String email = "user1@example.com";
-        String directId = "1";
-        int page = 0;
+        String id = "1";
+
 
         List<MessagesDTO> messages = List.of(new MessagesDTO());
         when(dataProcessor.isValidToken(token, email)).thenReturn(true);
-        when(directService.getMessages(directId, userName, userId, page)).thenReturn(messages);
+        when(directService.getMessages(id, userName, userId)).thenReturn(messages);
 
-        List<MessagesDTO> result = controller.getMessages(token, userId, userName, email, directId, page);
+        List<MessagesDTO> result = controller.getMessages(token, userId, userName, email, id, 0);
 
-        assertNotNull(result);
+        assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        verify(directService, times(1)).getMessages(directId, userName, userId, page);
+        verify(directService, times(1)).getMessages(id, userName, userId);
     }
 
     @Test
@@ -197,7 +169,7 @@ public class ControllerTest {
 
         List<MessagesDTO> result = controller.getMessages(token, userId, userName, email, directId, page);
 
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 }
 

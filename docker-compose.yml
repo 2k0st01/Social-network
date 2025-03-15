@@ -1,0 +1,213 @@
+version: "3.8"
+
+services:
+  eureka-server:
+    build: ./eureka-server-application
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    env_file:
+      - .env
+    networks:
+      - social-network
+
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8763:8763"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+    networks:
+      - social-network
+
+  authentication-client:
+    build: ./authentication-client
+    container_name: authentication-client
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+      - kafka1
+    networks:
+      - social-network
+
+
+  eureka-client-messenger:
+    build: ./eureka-client-messenger
+    container_name: eureka-client-messenger
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+    networks:
+      - social-network
+
+  eureka-file-store:
+    build: ./eureka-file-store
+    container_name: eureka-file-store
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+    networks:
+      - social-network
+
+  eureka-friends-followers-service:
+    build: ./eureka-friends-followers-service
+    container_name: eureka-friends-followers-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+    networks:
+      - social-network
+
+  news-feed-service:
+    build: ./news-feed-service
+    container_name: news-feed-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BROKER=kafka1:29092
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+      - kafka1
+    networks:
+      - social-network
+
+  post-service:
+    build: ./post-service
+    container_name: post-service
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BROKER=kafka1:29092
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+      - kafka1
+    networks:
+      - social-network
+
+  rating-service:
+    build: ./rating-service
+    container_name: rating-service
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BROKER=kafka1:29092
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+      - kafka1
+    networks:
+      - social-network
+
+  search-history:
+    build: ./search-history
+    container_name: search-history
+    ports:
+      - "8088:8088"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BROKER=kafka1:29092
+    env_file:
+      - .env
+    depends_on:
+      - eureka-server
+      - kafka1
+    networks:
+      - social-network
+
+  mysql:
+    image: mysql:8
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - social-network
+
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - social-network
+
+  kafka1:
+    image: apache/kafka:3.8.0
+    container_name: kafka1
+    hostname: kafka1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      KAFKA_LISTENERS: 'INTERNAL://0.0.0.0:29092,CONTROLLER://kafka1:29093,EXTERNAL://0.0.0.0:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka1:29092,EXTERNAL://localhost:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:29093'
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      CLUSTER_ID: 'DbcfHnhwTQSU3QUfjtETXg'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - social-network
+
+networks:
+  social-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  kafka_data:
