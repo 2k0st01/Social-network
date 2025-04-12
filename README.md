@@ -50,7 +50,7 @@ All services communicate through **REST APIs**, **Kafka**, and are registered vi
 - Fill out the required fields (DB access, Kafka ports, AWS keys, etc.)
 ```
 > 💡 Need help setting up MySQL, Redis, Kafka, generating JWT, or configuring AWS S3?  
-> Check out the [Dev Setup Guide](./dev-setup-guide.md) for step-by-step instructions.
+> Check out the [Dev Setup Guide](https://github.com/2k0st01/Social-network/wiki/setup) for step-by-step instructions.
 ```
 
 ### 2. Build the Services
