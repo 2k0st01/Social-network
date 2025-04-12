@@ -8,6 +8,7 @@ This guide helps you quickly set up **MySQL**, **Redis**, **Kafka**, generate a 
 ## 🔧 1. Docker Compose: MySQL, Redis, Kafka
 
 Open a `docker-compose.yml` in the folder.
+
 Find 
 
 ```yaml
