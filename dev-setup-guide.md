@@ -9,7 +9,7 @@ This guide helps you quickly set up **MySQL**, **Redis**, **Kafka**, generate a 
 
 Open a `docker-compose.yml` in the folder.
 
-Find 
+Find:
 
 ```yaml
       CLUSTER_ID: 'your_cluster_ID'
