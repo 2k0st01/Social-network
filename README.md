@@ -80,6 +80,12 @@ This project is great for:
 
 It’s a hands-on way to see how real systems are built and how services talk to each other.
 
+---
+
+📚 **Want to dive deeper into the architecture and APIs?**  
+Check out the [📘 Full Wiki Documentation](https://github.com/your-username/your-repo/wiki)
+
+
 ___
 
 ### Author
