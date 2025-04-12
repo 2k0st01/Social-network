@@ -83,7 +83,7 @@ It’s a hands-on way to see how real systems are built and how services talk to
 ---
 
 📚 **Want to dive deeper into the architecture and APIs?**  
-Check out the [📘 Full Wiki Documentation](https://github.com/your-username/your-repo/wiki)
+Check out the [📘 Full Wiki Documentation](https://github.com/2k0st01/Social-network/wiki)
 
 
 ___
