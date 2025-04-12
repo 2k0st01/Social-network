@@ -7,71 +7,11 @@ This guide helps you quickly set up **MySQL**, **Redis**, **Kafka**, generate a 
 
 ## 🔧 1. Docker Compose: MySQL, Redis, Kafka
 
-Create a `docker-compose.yml` with the following content:
+Open a `docker-compose.yml` in the folder.
+Find 
 
 ```yaml
-version: '3.8'
-
-services:
-  mysql:
-    image: mysql:8
-    container_name: mysql_container
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: testdb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - my_network
-
-  redis:
-    image: redis:latest
-    container_name: redis_container
-    restart: always
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - my_network
-
-  kafka1:
-    image: apache/kafka:3.8.0
-    container_name: kafka1
-    hostname: kafka1
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT'
-      KAFKA_LISTENERS: 'INTERNAL://0.0.0.0:29092,CONTROLLER://kafka1:29093,EXTERNAL://0.0.0.0:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka1:29092,EXTERNAL://localhost:9092'
-      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:29093'
-      KAFKA_PROCESS_ROLES: 'broker,controller'
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       CLUSTER_ID: 'your_cluster_ID'
-      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
-    volumes:
-      - kafka_data:/var/lib/kafka/data
-    networks:
-      - my_network
-
-volumes:
-  mysql_data:
-  redis_data:
-  kafka_data:
-
-networks:
-  my_network:
 ```
 
 ### 🧠 How to generate the `CLUSTER_ID`:
